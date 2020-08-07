@@ -34,17 +34,11 @@ abstract class BaseRecyclerViewDelegate<T : ListItem, VH : BaseRecyclerViewHolde
         holder.lastBoundItem = data
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        //do nothing by default
-    }
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) = Unit
 
-    override fun onViewAttachedToWindow(holder: VH) {
-        //do nothing by default
-    }
+    override fun onViewAttachedToWindow(holder: VH) = Unit
 
-    override fun onViewDetachedFromWindow(holder: VH) {
-        //do nothing by default
-    }
+    override fun onViewDetachedFromWindow(holder: VH) = Unit
 
 }
 

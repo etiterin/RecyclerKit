@@ -31,7 +31,7 @@ class DiffAdapter(
 
     private val differ: AsyncListDiffer<ListItem> = AsyncListDiffer(
         AdapterListUpdateCallback(this),
-        AsyncDifferConfig.Builder(ListDiffCallback<ListItem>()).build()
+        AsyncDifferConfig.Builder(ListDiffCallback()).build()
     )
 
     override fun getItem(position: Int): ListItem = differ.currentList[position]
@@ -40,7 +40,7 @@ class DiffAdapter(
 
     override fun getItemCount() = differ.currentList.size
 
-    private class ListDiffCallback<T> : DiffUtil.ItemCallback<ListItem>() {
+    private class ListDiffCallback : DiffUtil.ItemCallback<ListItem>() {
 
         override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
             return oldItem.listId == newItem.listId

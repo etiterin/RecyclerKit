@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
  *
  *
  */
+private typealias RecyclerDelegate = RecyclerViewDelegate<ListItem, RecyclerView.ViewHolder>
 
 abstract class AbsRecyclerDelegatesAdapter(
     val delegatesManager: DelegatesManager = DelegatesManager()
@@ -29,37 +30,38 @@ abstract class AbsRecyclerDelegatesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         delegatesManager.getDelegateFor(viewType).onCreateViewHolder(parent)
 
-    @Suppress("unchecked_cast")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
-        (delegatesManager.getDelegateFor(holder.itemViewType) as RecyclerViewDelegate<ListItem, RecyclerView.ViewHolder>)
-            .onBindViewHolder(holder, getItem(position), position, payloads)
+        getDelegateFor(viewType = holder.itemViewType)
+            .onBindViewHolder(
+                holder = holder,
+                data = getItem(position),
+                pos = position,
+                payloads = payloads
+            )
     }
+
+    @Suppress("unchecked_cast")
+    private fun getDelegateFor(viewType: Int): RecyclerDelegate = delegatesManager.getDelegateFor(viewType = viewType) as RecyclerDelegate
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         this.onBindViewHolder(holder, position, mutableListOf())
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        holder.apply {
-            delegatesManager.getDelegateFor(this.itemViewType).onViewRecycled(this)
-        }
+        getDelegateFor(viewType = holder.itemViewType).onViewRecycled(holder = holder)
     }
 
-    @Suppress("unchecked_cast")
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
-        (delegatesManager.getDelegateFor(holder.itemViewType) as RecyclerViewDelegate<ListItem, RecyclerView.ViewHolder>)
-            .onViewAttachedToWindow(holder)
+        getDelegateFor(viewType = holder.itemViewType).onViewAttachedToWindow(holder)
     }
 
-    @Suppress("unchecked_cast")
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        (delegatesManager.getDelegateFor(holder.itemViewType) as RecyclerViewDelegate<ListItem, RecyclerView.ViewHolder>)
-            .onViewDetachedFromWindow(holder)
+        getDelegateFor(viewType = holder.itemViewType).onViewDetachedFromWindow(holder)
     }
 
-    override fun getItemViewType(position: Int): Int = delegatesManager.getViewTypeFor(position, getItem(position) as Any)
+    override fun getItemViewType(position: Int): Int = delegatesManager.getViewTypeFor(position, getItem(position))
 
     abstract fun getItem(position: Int): ListItem
 

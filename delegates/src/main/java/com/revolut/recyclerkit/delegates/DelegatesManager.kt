@@ -22,17 +22,19 @@ import java.util.*
  *
  */
 
+private typealias RecyclerDelegateOut = RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>
+
 class DelegatesManager(
-    delegates: List<RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>>? = null
+    delegates: List<RecyclerDelegateOut>? = null
 ) {
 
-    private val delegates = LinkedHashMap<Int, RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>>()
+    private val delegates = LinkedHashMap<Int, RecyclerDelegateOut>()
 
     init {
         delegates?.let { addDelegates(it) }
     }
 
-    fun getDelegateFor(viewType: Int): RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder> {
+    fun getDelegateFor(viewType: Int): RecyclerDelegateOut {
         return delegates[viewType] ?: throw IllegalStateException("No delegate found for viewType $viewType")
     }
 
@@ -45,17 +47,22 @@ class DelegatesManager(
         throw IllegalStateException("No delegate found for position $position and object $data")
     }
 
-    fun addDelegate(delegate: RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>): DelegatesManager {
+    fun addDelegate(delegate: RecyclerDelegateOut): DelegatesManager {
         delegates[delegate.viewType] = delegate
         return this
     }
 
-    fun addDelegates(delegates: List<RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>>): DelegatesManager {
+    fun addDelegates(delegates: List<RecyclerDelegateOut>): DelegatesManager {
         delegates.forEach { addDelegate(it) }
         return this
     }
 
-    fun getDelegates(): Collection<RecyclerViewDelegate<out ListItem, out RecyclerView.ViewHolder>> {
+    fun addDelegates(vararg delegates: RecyclerDelegateOut): DelegatesManager {
+        delegates.forEach { addDelegate(it) }
+        return this
+    }
+
+    fun getDelegates(): Collection<RecyclerDelegateOut> {
         return delegates.values
     }
 
